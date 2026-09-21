@@ -1,1 +1,610 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moonbrew Studios | Color Cauldron: Sort Puzzle</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            900: '#4c1d95',
+                            dark: '#0f0c1b',
+                            card: '#18132a'
+                        },
+                        cauldron: {
+                            purple: '#9d4edd',
+                            cyan: '#00f5d4',
+                            pink: '#f72585',
+                            gold: '#ffb703'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 4s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 3s infinite',
+                        'bubble': 'bubbleUp 5s infinite ease-in',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-12px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.4', filter: 'blur(30px)' },
+                            '50%': { opacity: '0.8', filter: 'blur(45px)' },
+                        },
+                        bubbleUp: {
+                            '0%': { transform: 'translateY(100px) scale(0)', opacity: '0' },
+                            '50%': { opacity: '0.6' },
+                            '100%': { transform: 'translateY(-300px) scale(1)', opacity: '0' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar and ambient styles */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f0c1b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b2d59;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7c3aed;
+        }
+        .glow-effect {
+            box-shadow: 0 0 25px -5px rgba(139, 92, 246, 0.4);
+        }
+        .glass-panel {
+            background: rgba(24, 19, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(30, 24, 53, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(167, 139, 250, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-brand-dark text-slate-100 font-sans antialiased overflow-x-hidden selection:bg-brand-500 selection:text-white">
+
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 left-0 w-full z-50 glass-panel border-b border-white/10 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Studio Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-cauldron-pink to-cauldron-cyan p-0.5 shadow-lg shadow-brand-500/20">
+                        <div class="w-full h-full bg-brand-dark rounded-[10px] flex items-center justify-center">
+                            <i class="fa-solid font-bold text-transparent bg-clip-text bg-gradient-to-r from-cauldron-pink to-cauldron-cyan fa-flask text-lg"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="font-display font-extrabold text-xl tracking-wider text-white block leading-tight">MOONBREW</span>
+                        <span class="text-[10px] font-semibold text-brand-400 uppercase tracking-widest block -mt-1">Studios</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Links -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#about-game" class="text-sm font-medium text-slate-300 hover:text-cauldron-cyan transition-colors">Color Cauldron</a>
+                    <a href="#features" class="text-sm font-medium text-slate-300 hover:text-cauldron-cyan transition-colors">Features</a>
+                    <a href="#app-ads-txt" class="text-sm font-medium text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-shield-halved text-xs"></i> app-ads.txt
+                    </a>
+                    <a href="#support" class="text-sm font-medium text-slate-300 hover:text-cauldron-cyan transition-colors">Support</a>
+                    <a href="#privacy" class="text-sm font-medium text-slate-300 hover:text-cauldron-cyan transition-colors">Privacy Policy</a>
+                </div>
+
+                <!-- CTA Button -->
+                <div class="hidden md:flex items-center gap-3">
+                    <a href="#download" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-cauldron-pink hover:from-brand-500 hover:to-cauldron-pink text-white font-semibold text-sm shadow-lg shadow-brand-600/30 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2">
+                        <i class="fa-brands fa-google-play text-base"></i> Get Game
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button type="button" id="mobile-menu-btn" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 focus:outline-none" aria-label="Toggle Menu">
+                        <i class="fa-solid fa-bars text-xl" id="menu-icon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div class="hidden md:hidden glass-panel border-b border-white/10" id="mobile-menu">
+            <div class="px-4 pt-2 pb-6 space-y-3">
+                <a href="#about-game" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-brand-600/20">Color Cauldron</a>
+                <a href="#features" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-brand-600/20">Features</a>
+                <a href="#app-ads-txt" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-amber-400 hover:bg-amber-500/10"><i class="fa-solid fa-shield-halved text-xs mr-2"></i>app-ads.txt Setup</a>
+                <a href="#support" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-brand-600/20">Support</a>
+                <a href="#privacy" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-brand-600/20">Privacy Policy</a>
+                <div class="pt-2">
+                    <a href="#download" class="mobile-nav-link block text-center w-full px-5 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-cauldron-pink text-white font-semibold text-sm shadow-md">
+                        Download on Google Play
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
+        <!-- Ambient Glowing Background Bubbles -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-brand-600/20 rounded-full animate-pulse-glow pointer-events-none"></div>
+        <div class="absolute top-1/3 left-1/4 w-[350px] h-[350px] bg-cauldron-pink/15 rounded-full animate-pulse-glow pointer-events-none" style="animation-delay: 1.5s;"></div>
+        <div class="absolute top-1/2 right-1/4 w-[300px] h-[300px] bg-cauldron-cyan/15 rounded-full animate-pulse-glow pointer-events-none" style="animation-delay: 2.5s;"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- Text Content -->
+                <div class="lg:col-span-7 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-card border border-brand-400/30 text-brand-300 text-xs font-semibold uppercase tracking-wider mb-6">
+                        <span class="w-2 h-2 rounded-full bg-cauldron-cyan animate-ping"></span>
+                        Now Available on Google Play
+                    </div>
+                    
+                    <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight mb-6">
+                        Brew Magic & Master <br class="hidden sm:inline">
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-cauldron-cyan via-brand-400 to-cauldron-pink">
+                            Color Sort Puzzles
+                        </span>
+                    </h1>
+                    
+                    <p class="text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed mb-8">
+                        Dive into the enchanting world of <strong class="text-white font-semibold">Color Cauldron: Sort Puzzle</strong>. Mix, sort, and match vibrant magical potions in relaxing yet brain-teasing alchemy challenges!
+                    </p>
+
+                    <!-- Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-10">
+                        <a href="https://play.google.com/store/apps/details?id=com.colorcauldron" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-600 via-brand-500 to-cauldron-pink hover:opacity-95 text-white font-bold text-base shadow-xl shadow-brand-600/30 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                            <i class="fa-brands fa-google-play text-2xl"></i>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase font-semibold tracking-wider text-purple-200 leading-none">GET IT ON</div>
+                                <div class="text-lg font-bold leading-none mt-1">Google Play</div>
+                            </div>
+                        </a>
+                        <a href="#about-game" class="w-full sm:w-auto px-7 py-4 rounded-2xl glass-card hover:bg-white/10 text-white font-semibold text-base transition-all duration-300 flex items-center justify-center gap-2 border border-white/10">
+                            <i class="fa-solid fa-circle-play text-cauldron-cyan"></i> Learn More
+                        </a>
+                    </div>
+
+                    <!-- App Highlights Pills -->
+                    <div class="pt-6 border-t border-white/10 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-slate-400 text-sm">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-star text-amber-400"></i>
+                            <span class="text-slate-200 font-semibold">4.9/5 Rating</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-brain text-cauldron-pink"></i>
+                            <span>Brain Training</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-wifi text-cauldron-cyan"></i>
+                            <span>Offline Play</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Graphic Showcase -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-full max-w-[340px] animate-float">
+                        <!-- Frame Phone Container -->
+                        <div class="relative rounded-[40px] p-4 glass-card border-2 border-brand-500/30 shadow-2xl shadow-brand-900/80 bg-brand-dark/90">
+                            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-36 h-5 bg-black rounded-b-2xl z-20"></div>
+                            
+                            <!-- Phone Screen Canvas Mockup -->
+                            <div class="relative rounded-[30px] overflow-hidden bg-slate-950 aspect-[9/19] border border-white/10 flex flex-col justify-between p-4 pt-8">
+                                
+                                <!-- In-Game Top Bar Mockup -->
+                                <div class="flex justify-between items-center z-10">
+                                    <div class="glass-panel px-3 py-1 rounded-full text-xs font-bold text-amber-400 flex items-center gap-1">
+                                        <i class="fa-solid fa-trophy text-xs"></i> Level 42
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <div class="w-7 h-7 glass-panel rounded-full flex items-center justify-center text-xs text-white">
+                                            <i class="fa-solid fa-rotate-left"></i>
+                                        </div>
+                                        <div class="w-7 h-7 glass-panel rounded-full flex items-center justify-center text-xs text-white">
+                                            <i class="fa-solid fa-lightbulb text-amber-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Game Flask Graphic Display -->
+                                <div class="grid grid-cols-3 gap-3 my-auto py-4">
+                                    <!-- Flask 1 -->
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-12 h-28 rounded-b-2xl rounded-t-sm border-2 border-white/30 p-1 flex flex-col-reverse justify-start bg-white/5 relative overflow-hidden shadow-inner">
+                                            <div class="w-full h-6 bg-cauldron-purple rounded-b-xl my-0.5"></div>
+                                            <div class="w-full h-6 bg-cauldron-purple my-0.5"></div>
+                                            <div class="w-full h-6 bg-cauldron-cyan my-0.5"></div>
+                                            <div class="w-full h-6 bg-cauldron-pink my-0.5"></div>
+                                        </div>
+                                        <div class="w-16 h-2 bg-purple-900/60 rounded-full mt-2"></div>
+                                    </div>
+
+                                    <!-- Flask 2 (Selected/Active) -->
+                                    <div class="flex flex-col items-center -translate-y-3 transition-transform">
+                                        <div class="w-12 h-28 rounded-b-2xl rounded-t-sm border-2 border-cauldron-cyan p-1 flex flex-col-reverse justify-start bg-cauldron-cyan/10 relative overflow-hidden glow-effect">
+                                            <div class="w-full h-6 bg-cauldron-cyan rounded-b-xl my-0.5"></div>
+                                            <div class="w-full h-6 bg-cauldron-cyan my-0.5"></div>
+                                            <div class="w-full h-6 bg-cauldron-cyan my-0.5 animate-pulse"></div>
+                                        </div>
+                                        <div class="w-16 h-2 bg-cauldron-cyan/40 rounded-full mt-2"></div>
+                                    </div>
+
+                                    <!-- Flask 3 -->
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-12 h-28 rounded-b-2xl rounded-t-sm border-2 border-white/30 p-1 flex flex-col-reverse justify-start bg-white/5 relative overflow-hidden shadow-inner">
+                                            <div class="w-full h-6 bg-cauldron-pink rounded-b-xl my-0.5"></div>
+                                            <div class="w-full h-6 bg-cauldron-pink my-0.5"></div>
+                                            <div class="w-full h-6 bg-cauldron-purple my-0.5"></div>
+                                        </div>
+                                        <div class="w-16 h-2 bg-purple-900/60 rounded-full mt-2"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Game Bottom Controls Mockup -->
+                                <div class="glass-panel rounded-2xl p-3 text-center z-10">
+                                    <p class="text-xs text-brand-300 font-medium">Tap potion tube to pour</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Floating Badges -->
+                        <div class="absolute -bottom-5 -left-8 glass-card p-3 rounded-2xl border border-cauldron-pink/40 shadow-xl flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-cauldron-pink/20 flex items-center justify-center text-cauldron-pink text-lg font-bold">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold text-white">500+ Levels</div>
+                                <div class="text-[10px] text-slate-400">Endless Magic Fun</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About & Game Features Section -->
+    <section id="about-game" class="py-20 relative bg-brand-dark/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-xs font-bold text-cauldron-cyan uppercase tracking-widest mb-2">Gameplay Overview</h2>
+                <p class="font-display text-3xl sm:text-4xl font-extrabold text-white">Why Players Love Color Cauldron</p>
+                <p class="mt-4 text-slate-400 text-base">An addictive puzzle game designed for all ages. Simple to pick up, challenging to master.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="features">
+                <!-- Feature 1 -->
+                <div class="glass-card p-8 rounded-3xl hover:border-brand-500/50 transition-all duration-300 group hover:-translate-y-1">
+                    <div class="w-14 h-14 rounded-2xl bg-brand-500/20 border border-brand-500/30 flex items-center justify-center text-brand-400 text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-vial-circle-check"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-white mb-3">Simple Yet Strategic</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Pour liquids from tube to tube until all tubes contain a single, uniform color. Simple touch controls let you play with one hand anytime!
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="glass-card p-8 rounded-3xl hover:border-cauldron-pink/50 transition-all duration-300 group hover:-translate-y-1">
+                    <div class="w-14 h-14 rounded-2xl bg-cauldron-pink/20 border border-cauldron-pink/30 flex items-center justify-center text-cauldron-pink text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-hat-wizard"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-white mb-3">Mystical Alchemy Themes</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Unlock vibrant cauldrons, colorful spell potions, unique glass flask shapes, and enchanting sound effects as you progress.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="glass-card p-8 rounded-3xl hover:border-cauldron-cyan/50 transition-all duration-300 group hover:-translate-y-1">
+                    <div class="w-14 h-14 rounded-2xl bg-cauldron-cyan/20 border border-cauldron-cyan/30 flex items-center justify-center text-cauldron-cyan text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-shield-heart"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-white mb-3">No Time Limits or Stress</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Enjoy smooth gameplay without stressful timers. Restart levels at any time or use helpful boosters whenever you get stuck.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- APP-ADS.TXT MANAGEMENT & HOSTING SECTION -->
+    <section id="app-ads-txt" class="py-20 relative">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-card rounded-3xl p-6 sm:p-10 border-2 border-amber-500/30 relative overflow-hidden">
+                <!-- Ambient glow -->
+                <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 pb-6 border-b border-white/10">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase mb-2">
+                            <i class="fa-solid fa-circle-check"></i> AdMob Crawler Verified Ready
+                        </div>
+                        <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-white">Developer app-ads.txt Hosting</h2>
+                        <p class="text-slate-400 text-sm mt-1">This site serves your required AdMob verification file directly for Google Play integration.</p>
+                    </div>
+
+                    <!-- Direct Raw Link Button -->
+                    <button onclick="toggleRawModal()" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm transition-all shadow-lg flex items-center gap-2">
+                        <i class="fa-solid fa-code"></i> View Raw File
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-7">
+                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                            Your Live app-ads.txt Snippet:
+                        </label>
+                        
+                        <!-- Snippet Display Box -->
+                        <div class="relative bg-slate-950 rounded-2xl p-4 border border-white/10 font-mono text-xs sm:text-sm text-emerald-400 overflow-x-auto shadow-inner flex items-center justify-between">
+                            <span id="app-ads-content" class="select-all break-all">google.com, pub-2356032234822732, DIRECT, f08c47fec0942fa0</span>
+                            <button onclick="copyAppAdsText()" id="copy-btn" class="ml-3 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-sans transition-all flex items-center gap-1.5 shrink-0">
+                                <i class="fa-regular fa-copy"></i> Copy
+                            </button>
+                        </div>
+
+                        <div class="mt-4 flex flex-wrap gap-3">
+                            <button onclick="downloadAppAdsFile()" class="px-4 py-2 rounded-xl glass-panel hover:bg-white/10 text-slate-300 text-xs font-medium transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-download text-cauldron-cyan"></i> Download app-ads.txt
+                            </button>
+                            <a href="https://admob.google.com" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl glass-panel hover:bg-white/10 text-slate-300 text-xs font-medium transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-amber-400"></i> Open AdMob Console
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Steps for Google Play Console -->
+                    <div class="lg:col-span-5 glass-panel p-5 rounded-2xl border border-white/5 space-y-3">
+                        <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider">Instructions for AdMob Approval:</h4>
+                        <ol class="text-xs text-slate-400 space-y-2 list-decimal list-inside">
+                            <li>Publish this site URL (e.g. GitHub Pages / Vercel link) to <strong>Google Play Console</strong> &gt; <strong>Store presence</strong> &gt; <strong>Store settings</strong>.</li>
+                            <li>Make sure the site URL matches your developer domain.</li>
+                            <li>Go back to <strong>AdMob Portal</strong> and click <strong class="text-slate-200">"Check for updates"</strong>.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Support Section -->
+    <section id="support" class="py-20 relative bg-brand-dark/60">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-xs font-bold text-cauldron-pink uppercase tracking-widest mb-2">Help & Assistance</h2>
+                <p class="font-display text-3xl font-extrabold text-white">Need Support or Have Feedback?</p>
+                <p class="text-slate-400 text-sm mt-2">We are dedicated to improving Color Cauldron! Contact Moonbrew Studios anytime.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+                <!-- Direct Contact Info -->
+                <div class="md:col-span-5 glass-card p-6 rounded-2xl space-y-6">
+                    <div>
+                        <h3 class="text-base font-bold text-white mb-1">Developer Contact</h3>
+                        <p class="text-xs text-slate-400">Moonbrew Studios Support Team</p>
+                    </div>
+
+                    <div class="space-y-4 text-xs">
+                        <div class="flex items-center gap-3 text-slate-300">
+                            <div class="w-8 h-8 rounded-lg bg-brand-500/20 text-brand-400 flex items-center justify-center">
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                            <div>
+                                <div class="text-slate-500 text-[10px] uppercase">Support Email</div>
+                                <a href="mailto:support@moonbrewstudios.com" class="font-medium hover:text-cauldron-cyan transition-colors">support@moonbrewstudios.com</a>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3 text-slate-300">
+                            <div class="w-8 h-8 rounded-lg bg-cauldron-cyan/20 text-cauldron-cyan flex items-center justify-center">
+                                <i class="fa-solid fa-globe"></i>
+                            </div>
+                            <div>
+                                <div class="text-slate-500 text-[10px] uppercase">Publisher Site</div>
+                                <span>Moonbrew Studios</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Support Form -->
+                <div class="md:col-span-7 glass-card p-6 sm:p-8 rounded-2xl">
+                    <form id="support-form" onsubmit="handleSupportSubmit(event)" class="space-y-4">
+                        <div>
+                            <label for="contact-name" class="block text-xs font-medium text-slate-300 mb-1">Your Name</label>
+                            <input type="text" id="contact-name" required placeholder="John Doe" class="w-full px-4 py-2.5 rounded-xl bg-slate-950/60 border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-brand-500 transition-colors">
+                        </div>
+
+                        <div>
+                            <label for="contact-email" class="block text-xs font-medium text-slate-300 mb-1">Email Address</label>
+                            <input type="email" id="contact-email" required placeholder="name@example.com" class="w-full px-4 py-2.5 rounded-xl bg-slate-950/60 border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-brand-500 transition-colors">
+                        </div>
+
+                        <div>
+                            <label for="contact-message" class="block text-xs font-medium text-slate-300 mb-1">Message or Issue Report</label>
+                            <textarea id="contact-message" rows="4" required placeholder="Describe your inquiry or level feedback..." class="w-full px-4 py-2.5 rounded-xl bg-slate-950/60 border border-white/10 text-slate-100 text-sm focus:outline-none focus:border-brand-500 transition-colors resize-none"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm transition-all shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane text-xs"></i> Send Support Message
+                        </button>
+                    </form>
+
+                    <div id="support-alert" class="hidden mt-4 p-3 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs text-center">
+                        Thank you! Your message has been received. Our team will get back to you shortly.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Privacy Policy Section -->
+    <section id="privacy" class="py-16 border-t border-white/10">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-card p-8 rounded-3xl">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="font-display text-2xl font-bold text-white">Privacy Policy</h2>
+                    <span class="text-xs text-slate-400">Last updated: September 2026</span>
+                </div>
+                
+                <div class="text-xs text-slate-300 space-y-4 max-h-60 overflow-y-auto pr-2">
+                    <p><strong>Moonbrew Studios</strong> operates the game <em>Color Cauldron: Sort Puzzle</em>. This Privacy Policy informs users regarding policies with the collection, use, and disclosure of Personal Information for anyone using our game.</p>
+                    
+                    <h4 class="font-bold text-slate-100 text-sm">Information Collection & Use</h4>
+                    <p>For a better experience while using our Service, we may require you to provide us with certain personally identifiable information. We also utilize third-party services like Google AdMob to serve advertisements.</p>
+
+                    <h4 class="font-bold text-slate-100 text-sm">AdMob & Advertising</h4>
+                    <p>AdMob may collect device identifiers and usage data to serve relevant advertising. You can manage personalized ad preferences in your mobile device settings.</p>
+
+                    <h4 class="font-bold text-slate-100 text-sm">Contact Us</h4>
+                    <p>If you have any questions regarding privacy, please contact us at <a href="mailto:support@moonbrewstudios.com" class="text-brand-400 underline">support@moonbrewstudios.com</a>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-black border-t border-white/10 text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-flask text-brand-500"></i>
+                <span class="font-bold text-slate-300">Moonbrew Studios</span> &copy; 2026. All rights reserved.
+            </div>
+            <div class="flex gap-6">
+                <a href="#about-game" class="hover:text-slate-300 transition-colors">Game Details</a>
+                <a href="#app-ads-txt" class="hover:text-slate-300 transition-colors">app-ads.txt</a>
+                <a href="#privacy" class="hover:text-slate-300 transition-colors">Privacy Policy</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Raw app-ads.txt Modal -->
+    <div id="raw-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-card max-w-lg w-full rounded-2xl p-6 border border-white/20">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-file-lines text-amber-400"></i> Raw app-ads.txt File View
+                </h3>
+                <button onclick="toggleRawModal()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <p class="text-xs text-slate-400 mb-3">Google AdMob crawler reads this raw text string from the domain root:</p>
+            
+            <pre class="bg-black p-4 rounded-xl border border-white/10 text-xs font-mono text-emerald-400 select-all overflow-x-auto">google.com, pub-2356032234822732, DIRECT, f08c47fec0942fa0</pre>
+
+            <div class="mt-6 flex justify-end gap-3">
+                <button onclick="copyAppAdsText()" class="px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-semibold hover:bg-brand-500">
+                    Copy Text
+                </button>
+                <button onclick="toggleRawModal()" class="px-4 py-2 rounded-xl bg-white/10 text-slate-300 text-xs font-semibold hover:bg-white/20">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Copy app-ads.txt line
+        function copyAppAdsText() {
+            const content = document.getElementById('app-ads-content').innerText;
+            const tempInput = document.createElement('textarea');
+            tempInput.value = content;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            const copyBtn = document.getElementById('copy-btn');
+            const originalHTML = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Copied!';
+            setTimeout(() => {
+                copyBtn.innerHTML = originalHTML;
+            }, 2000);
+        }
+
+        // Download app-ads.txt file
+        function downloadAppAdsFile() {
+            const content = "google.com, pub-2356032234822732, DIRECT, f08c47fec0942fa0";
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'app-ads.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Modal toggle
+        function toggleRawModal() {
+            const modal = document.getElementById('raw-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        // Support Form Handler
+        function handleSupportSubmit(e) {
+            e.preventDefault();
+            const alertBox = document.getElementById('support-alert');
+            alertBox.classList.remove('hidden');
+            document.getElementById('support-form').reset();
+            setTimeout(() => {
+                alertBox.classList.add('hidden');
+            }, 4000);
+        }
+
+        // Mobile Menu Toggle
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.querySelectorAll('.mobile-nav-link');
+
+        mobileBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
